@@ -1,0 +1,140 @@
+@import 'base.css';
+@import 'footer.css';
+
+body {
+	background: white;
+}
+
+acronym:hover, abbrev:hover {
+	cursor: help;
+}
+
+abbrev[title], acronym[title], span[title] {
+	border-bottom: none;
+	cursor: help;
+}
+
+.tsscontents {
+	background: white;
+	padding: 4px;
+	margin: 0px;
+}
+
+.tssheadbin {
+	background: white;
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+.tsstailbin {
+	background: white;
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+.tssheader {
+	color: #550;
+	border: dotted white 1px;
+	background: #ddd;
+	padding-left: 4px;
+	font-variant: small-caps;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.award {
+	width: 250px;
+	font-size: 11px;
+	border-collapse: collapse;
+	border: solid 1px black;
+	background: #eed;
+}
+
+.award img {
+	padding-left: 8px;
+}
+
+.award td {
+	vertical-align: middle;
+	padding: 2px;
+	margin: 0px;
+}
+
+.award b {
+	font-size: 15px;
+}
+
+.award a, .award a:visited {
+	color: black;
+	text-decoration: none;
+}
+
+.awarddate {
+	text-align: right;
+	font-size: 11pt;
+	background: #ddc;
+	color: white;
+	font-weight: bold;
+}
+
+.tsstopbar {
+	background-color: #37a;
+	border-collapse: collapse;
+	border-bottom: dotted 2px white;
+}
+
+.tsstopbar td {
+	padding: 0px;
+	margin: 0px;
+}
+
+.tsstopbar a {
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
+	font-family: verdana;
+	font-size: 13px;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	white-space: pre;
+}
+
+.tsstopbar a:hover {
+	color: black;
+	background: #ddd;
+}
+
+.tsstopbar table {
+	border-collapse: collapse;
+}
+
+.tsstopbar table td {
+	border-right: dotted 2px white;
+	color: white;
+	margin: 0px;
+	padding: 0px;
+	vertical-align: middle;
+}
+
+#tsstopbardisabled {
+	color: black;
+	background: white;
+}
+
+#tsstopbardisabled a {
+	color: black;
+	background: white;
+}
+
+#tsstopbanner {
+	vertical-align: bottom;
+	padding: 0px;
+	/*
+	background-image: url(../../images/pat/bg.png);
+	border-bottom: solid 1px black;
+	*/
+}

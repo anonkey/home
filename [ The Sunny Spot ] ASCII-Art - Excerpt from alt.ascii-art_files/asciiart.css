@@ -1,0 +1,123 @@
+body,
+.tsstopbar,
+.tssfooter
+{
+	background: #333;
+}
+
+.tsscontents {
+	color: white;
+	background: black;
+}
+
+.tsscontents img {
+	margin: 4px;
+}
+
+.tsscontents a, .tsscontents a:visited {
+	color: #ccc;
+	font-weight: bold;
+	text-decoration: none;
+	border-bottom: dotted 1px #ccc;
+}
+
+.tsscontents a:hover {
+	color: white;
+	border-bottom: solid 1px white;
+}
+
+.aalinklst {
+	background: #333;
+	border: solid 1px black;
+	padding: 2px;
+	margin-top: 0;
+	margin-right: 4px;
+}
+
+.aalinklst a:before {
+	content: 'o';
+	font-family: wingdings;
+	text-decoration: none;
+	color: white;
+	padding-right: 6px;
+	margin-left: 4px;
+}
+
+.aalinkgroup {
+	font-weight: bold;
+	background: green;
+	color: white;
+}
+
+.aalinkgroup:before {
+	content: 'x';
+	font-family: wingdings;
+	padding-right: 2px;
+	margin-left: 4px;
+}
+
+pre {
+	font-size: 8px;
+	color: #ccc;
+	background: black;
+}
+
+.asciiartdocument {
+	padding: 10px;
+	font-size: 13px;
+	color: white;
+	background: black;
+}
+
+.topmenu {
+	width: 100%;
+	background: #666;
+	border-collapse: collapse;
+	margin: 0px;
+	padding: 0px;
+	border-bottom: solid 1px black;
+}
+
+.topmenu a, .topmenu a:visited {
+	font-variant: small-caps;
+	font-weight: bold;
+	font-size: 13px;
+	text-decoration: none;
+	color: white;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.topmenu a:hover, .topmenu a#active {
+	color: black;
+	background: #ffe;
+}
+
+.topiclisting {
+	width: 100%;
+}
+
+.topiclisting th {
+	background: green;
+	color: white;
+	text-align: left;
+	text-indent: 4px;
+}
+
+.topiclisting td {
+	padding-left: 8px;
+	background: #333;
+	color: white;
+}
+
+.topiclisting a, .topiclisting a:visited {
+	color: white;
+	font-weight: bold;
+	margin-left: -4px;
+}
+
+#aareverse {
+	background: #fff;
+	color: black;
+	font-size: 8px;
+}
