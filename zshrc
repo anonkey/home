@@ -2,7 +2,84 @@
 export PATH=/nfs/zfs-student-4/users/2013/tseguier/sh_plugins/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/texbin:/nfs/zfs-student-4/users/2013/tseguier/.brew/bin
 #export $BROWSER=cat
 # un VRAI éditeur de texte ;)
-export EDITOR=/usr/bin/vim
+#export EDITOR=/usr/bin/vim
+export RANDFILE=/dev/random
+
+
+# {{{ check for version/system
+# check for versions (compatibility reasons)
+is4(){
+    [[ $ZSH_VERSION == <4->* ]] && return 0
+    return 1
+}
+
+is41(){
+    [[ $ZSH_VERSION == 4.<1->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+is42(){
+    [[ $ZSH_VERSION == 4.<2->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+is425(){
+    [[ $ZSH_VERSION == 4.2.<5->* || $ZSH_VERSION == 4.<3->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+is43(){
+    [[ $ZSH_VERSION == 4.<3->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+is433(){
+    [[ $ZSH_VERSION == 4.3.<3->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+is439(){
+    [[ $ZSH_VERSION == 4.3.<9->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <5->* ]] && return 0
+    return 1
+}
+
+#f1# Checks whether or not you're running grml
+isgrml(){
+    [[ -f /etc/grml_version ]] && return 0
+    return 1
+}
+
+#f1# Checks whether or not you're running a grml cd
+isgrmlcd(){
+    [[ -f /etc/grml_cd ]] && return 0
+    return 1
+}
+
+if isgrml ; then
+#f1# Checks whether or not you're running grml-small
+    isgrmlsmall() {
+        [[ ${${${(f)"$(</etc/grml_version)"}%% *}##*-} == 'small' ]] && return 0 ; return 1
+    }
+else
+    isgrmlsmall() { return 1 }
+fi
+
+isdarwin(){
+    [[ $OSTYPE == darwin* ]] && return 0
+    return 1
+}
+
+#f1# are we running within an utf environment?
+isutfenv() {
+    case "$LANG $CHARSET $LANGUAGE" in
+        *utf*) return 0 ;;
+        *UTF*) return 0 ;;
+        *)     return 1 ;;
+    esac
+}
+
+# check for user, if not running as root set $SUDO to sudo
+(( EUID != 0 )) && SUDO='sudo' || SUDO=''
 
 # Complétion
 autoload -U compinit
@@ -40,7 +117,7 @@ zstyle ':completion:*:manuals.(^1*)' insert-sections true
 ## `reverse' to sort in decreasing order
 ## If the style is set to any other value, or is unset, files will be
 ## sorted alphabetically by name.
-#zstyle ':completion:*' file-sort name
+zstyle ':completion:*' file-sort name
 
 ## how many completions switch on menu selection
 ## use 'long' to start menu compl. if list is bigger than screen
@@ -65,8 +142,10 @@ zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path ~/.zcompcache/$HOST
 
+  
+
 ## add colors to completions
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ${(s.:.)LSCOLORS}
 
 ## don't complete backup files as executables
 zstyle ':completion:*:complete:-command-::commands' ignored-patterns '*\~'
@@ -90,6 +169,14 @@ PROMPT="%B%{$fg[red]%}[%T]%{$reset_color%}%{$fg[green]%}%B %n:%1~/%{$reset_color
 
 ##		Std right prompt
 RPROMPT="%{$fg[green]%}%B[(%?) %D{%d/%m/%y}]%{$reset_color%}" 
+##		Secondary prompt, printed when the shell needs more information to complete a command.
+PS2="%{$fg[green]%}%B\`%_%{$reset_color%}> "
+##		Selection prompt used within a select loop.
+PS3="?# "
+##		The execution trace prompt (setopt xtrace). default: '+%N:%i>'
+PS4="%{$fg[green]%}%B|->+%N:%i:%_%{$reset_color%} > "
+
+
 
 # Les alias marchent comme sous bash
 alias src='source ~/.zshrc'
@@ -99,6 +186,11 @@ alias nrm="norminette"
 alias re='make re'
 alias fclean='make fclean'
 alias clean='make clean'
+alias tf='tail -F'
+alias mk='mkdir-cd'
+alias ip="ifconfig | grep 'inet'"
+alias aspi='wget -rkpE'
+alias siz='du -sh'
 
 # Git
 alias gc='git clone'
@@ -141,6 +233,9 @@ alias sX="simple-extract"
 alias -g G='| grep'
 alias -g S='| sort'
 alias -g L='| less'
+alias -g N1='1>/dev/null'
+alias -g N2='2>/dev/null'
+alias -g Na='&>/dev/null'
 alias -g T='| tail'
 alias -g H='| head'
 alias -g W='| wc'
@@ -202,37 +297,98 @@ bindkey "\e[5C" forward-word
 bindkey "\e[5D" backward-word
 bindkey "\e[1;5C" forward-word
 bindkey "\e[1;5D" backward-word
-# {{{ keybindings
-if [[ "$TERM" != emacs ]] ; then
-    [[ -z "$terminfo[kdch1]" ]] || bindkey -M emacs "$terminfo[kdch1]" delete-char
-    [[ -z "$terminfo[khome]" ]] || bindkey -M emacs "$terminfo[khome]" beginning-of-line
-    [[ -z "$terminfo[kend]"  ]] || bindkey -M emacs "$terminfo[kend]"  end-of-line
-    [[ -z "$terminfo[kdch1]" ]] || bindkey -M vicmd "$terminfo[kdch1]" vi-delete-char
-    [[ -z "$terminfo[khome]" ]] || bindkey -M vicmd "$terminfo[khome]" vi-beginning-of-line
-    [[ -z "$terminfo[kend]"  ]] || bindkey -M vicmd "$terminfo[kend]"  vi-end-of-line
-    [[ -z "$terminfo[cuu1]"  ]] || bindkey -M viins "$terminfo[cuu1]"  vi-up-line-or-history
-    [[ -z "$terminfo[cuf1]"  ]] || bindkey -M viins "$terminfo[cuf1]"  vi-forward-char
-    [[ -z "$terminfo[kcuu1]" ]] || bindkey -M viins "$terminfo[kcuu1]" vi-up-line-or-history
-    [[ -z "$terminfo[kcud1]" ]] || bindkey -M viins "$terminfo[kcud1]" vi-down-line-or-history
-    [[ -z "$terminfo[kcuf1]" ]] || bindkey -M viins "$terminfo[kcuf1]" vi-forward-char
-    [[ -z "$terminfo[kcub1]" ]] || bindkey -M viins "$terminfo[kcub1]" vi-backward-char
-    # ncurses stuff:
-    [[ "$terminfo[kcuu1]" == $'\eO'* ]] && bindkey -M viins "${terminfo[kcuu1]/O/[}" vi-up-line-or-history
-    [[ "$terminfo[kcud1]" == $'\eO'* ]] && bindkey -M viins "${terminfo[kcud1]/O/[}" vi-down-line-or-history
-    [[ "$terminfo[kcuf1]" == $'\eO'* ]] && bindkey -M viins "${terminfo[kcuf1]/O/[}" vi-forward-char
-    [[ "$terminfo[kcub1]" == $'\eO'* ]] && bindkey -M viins "${terminfo[kcub1]/O/[}" vi-backward-char
-    [[ "$terminfo[khome]" == $'\eO'* ]] && bindkey -M viins "${terminfo[khome]/O/[}" beginning-of-line
-    [[ "$terminfo[kend]"  == $'\eO'* ]] && bindkey -M viins "${terminfo[kend]/O/[}"  end-of-line
-    [[ "$terminfo[khome]" == $'\eO'* ]] && bindkey -M emacs "${terminfo[khome]/O/[}" beginning-of-line
-    [[ "$terminfo[kend]"  == $'\eO'* ]] && bindkey -M emacs "${terminfo[kend]/O/[}"  end-of-line
-fi
 
+# create a zkbd compatible hash;
+# to add other keys to this hash, see: man 5 terminfo
+typeset -A key
+
+key[Home]=${terminfo[khome]}
+
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+
+# setup key accordingly
+[[ -n "${key[Home]}"     ]]  && bindkey  "${key[Home]}"     beginning-of-line
+[[ -n "${key[End]}"      ]]  && bindkey  "${key[End]}"      end-of-line
+##[[ -n "${key[Insert]}"   ]]  && bindkey  "${key[Insert]}"   overwrite-mode
+[[ -n "${key[Delete]}"   ]]  && bindkey  "${key[Delete]}"   delete-char
+[[ -n "${key[Up]}"       ]]  && bindkey  "${key[Up]}"       up-line-or-history
+[[ -n "${key[Down]}"     ]]  && bindkey  "${key[Down]}"     down-line-or-history
+[[ -n "${key[Left]}"     ]]  && bindkey  "${key[Left]}"     backward-char
+[[ -n "${key[Right]}"    ]]  && bindkey  "${key[Right]}"    forward-char
+[[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   beginning-of-buffer-or-history
+[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" end-of-buffer-or-history
+bindkey '<ctrl-a>' beginning-of-line
+bindkey '<ctrl-e>' end-of-line
+
+
+insert-datestamp() { LBUFFER+=${(%):-'%D{%d-%m-%Y }'}; }
+zle -N insert-datestamp
+#k# Insert a timestamp on the command line (yyyy-mm-dd)
+bindkey '^Ed' insert-datestamp
+
+insert-timestamp() { LBUFFER+=${(%):-'%D{%H:%M }'}; }
+zle -N insert-timestamp
+#k# Insert a timestamp on the command line (yyyy-mm-dd)
+bindkey '^Et' insert-timestamp
+
+mkdir-cd() {
+	mkdir $1
+	cd $1
+}
+zle -N mkdir-cd
+
+### jump behind the first word on the cmdline.
+### useful to add options.
+function jump_after_first_word() {
+    local words
+    words=(${(z)BUFFER})
+
+    if (( ${#words} <= 1 )) ; then
+        CURSOR=${#BUFFER}
+    else
+        CURSOR=${#${words[1]}}
+    fi
+}
+zle -N jump_after_first_word
+#k# jump to after first word (for adding options)
+bindkey '^J1' jump_after_first_word
 
 #Activer l'historique des commandes:
 HISTFILE=~/.history
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=5000
+SAVEHIST=10000
 export HISTFILE SAVEHIST
+
+# dirstack handling {{{
+
+DIRSTACKSIZE=${DIRSTACKSIZE:-20}
+DIRSTACKFILE=${DIRSTACKFILE:-${HOME}/.zdirs}
+
+if [[ -f ${DIRSTACKFILE} ]] && [[ ${#dirstack[*]} -eq 0 ]] ; then
+    dirstack=( ${(f)"$(< $DIRSTACKFILE)"} )
+    # "cd -" won't work after login by just setting $OLDPWD, so
+    [[ -d $dirstack[1] ]] && cd $dirstack[1] && cd $OLDPWD
+fi
+
+chpwd() {
+    local -ax my_stack
+    my_stack=( ${PWD} ${dirstack} )
+    if is42 ; then
+        builtin print -l ${(u)my_stack} >! ${DIRSTACKFILE}
+    else
+        uprint my_stack >! ${DIRSTACKFILE}
+    fi
+}
+
+# }}}
 
 ## History options
 setopt incappendhistory \
@@ -432,5 +588,56 @@ Using option -d deletes the original archive file."
     done
     return $RC
 }
+
+#f1# Provides useful information on globbing
+H-Glob() {
+    echo -e "
+    /      directories
+    .      plain files
+    @      symbolic links
+    =      sockets
+    p      named pipes (FIFOs)
+    *      executable plain files (0100)
+    %      device files (character or block special)
+    %b     block special files
+    %c     character special files
+    r      owner-readable files (0400)
+    w      owner-writable files (0200)
+    x      owner-executable files (0100)
+    A      group-readable files (0040)
+    I      group-writable files (0020)
+    E      group-executable files (0010)
+    R      world-readable files (0004)
+    W      world-writable files (0002)
+    X      world-executable files (0001)
+    s      setuid files (04000)
+    S      setgid files (02000)
+    t      files with the sticky bit (01000)
+
+  print *(m-1)          # Files modified up to a day ago
+  print *(a1)           # Files accessed a day ago
+  print *(@)            # Just symlinks
+  print *(Lk+50)        # Files bigger than 50 kilobytes
+  print *(Lk-50)        # Files smaller than 50 kilobytes
+  print **/*.c          # All *.c files recursively starting in \$PWD
+  print **/*.c~file.c   # Same as above, but excluding 'file.c'
+  print (foo|bar).*     # Files starting with 'foo' or 'bar'
+  print *~*.*           # All Files that do not contain a dot
+  chmod 644 *(.^x)      # make all plain non-executable files publically readable
+  print -l *(.c|.h)     # Lists *.c and *.h
+  print **/*(g:users:)  # Recursively match all files that are owned by group 'users'
+  echo /proc/*/cwd(:h:t:s/self//) # Analogous to >ps ax | awk '{print $1}'<"
+}
+alias help-zshglob=H-Glob
+
+# support colors in less
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
 ## Login Pic
 startanim
+
