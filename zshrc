@@ -187,16 +187,21 @@ alias re='make re'
 alias fclean='make fclean'
 alias clean='make clean'
 alias tf='tail -F'
-alias mk='mkdir-cd'
+alias mk='nocorrect mkdir-cd'
 alias ip="ifconfig | grep 'inet'"
 alias aspi='wget -rkpE'
 alias siz='du -sh'
+alias pt='peer_tools'
+alias gcc='gcc -Wall -Wextra -Werror'
+alias lib='cat ~/libft/headers/*.h'
+alias clr='clear'
 
 # Git
 alias gc='git clone'
 alias ga='git add'
 alias gco='git commit -m'
 alias gp='git push'
+alias gpl='git pull'
 
 # Taf
 alias taf='. taf'
@@ -214,10 +219,6 @@ alias lr='ls -R'
 alias llr='ls -lR'
 alias lar='ls -aR'
 alias llar='ls -laR'
-
-# Cp mv
-alias cp='cp -R'
-alias mv='mv -R'
 
 # Brew
 alias search="brew search"
@@ -280,16 +281,19 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-
-
 # Les trois lignes suivantes changent le comportement de rm, cp et mv de
 # manière à ce que ces programmes demandent confirmation avant d'effacer un
 # fichier.
 alias rm="nocorrect rm -i"
+alias mkdir="nocorrect mkdir"
 alias mv="nocorrect mv -i"
-alias cp="nocorrect cp -i"
+##alias cp="nocorrect cp -i"
 
 
+# Cp mv
+alias cpf='cp -R'
+alias mvf='mv -R'
+alias rmf='rm -Rf'
 
 ## Use Ctrl-left-arrow and Ctrl-right-arrow for jumping to
 ## word-beginnings on the CL
@@ -340,8 +344,7 @@ zle -N insert-timestamp
 bindkey '^Et' insert-timestamp
 
 mkdir-cd() {
-	mkdir $1
-	cd $1
+	mkdir $1 && cd $1
 }
 zle -N mkdir-cd
 
@@ -639,5 +642,5 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 ## Login Pic
-startanim
+#startanim
 

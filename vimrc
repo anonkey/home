@@ -81,7 +81,7 @@ highlight ExtraWhitespace ctermbg=red guibg=red
 highlight MissingWhitespace ctermbg=green guibg=green
 highlight CKeywSpaceNext ctermbg=green guibg=green
 highlight CKeywSpPar ctermbg=green guibg=green
-highlight CKeywIF ctermbg=green guibg=green
+highlight CKeywReturn ctermbg=green guibg=green
 highlight EOFErr ctermbg=red guibg=red
 "au BufWinEnter * silent loadview
 au BufWinEnter * let w:m1=matchadd('ErrorMsg', '\%>80v.\+', -1)
